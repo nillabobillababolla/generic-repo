@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Generic.Business.Repository.Interfaces;
 using Generic.Entity.Interfaces;
@@ -7,23 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Business.Repository.Repositories
 {
-    public class EntityFrameworkRepository<TContext> : EntityFrameworkReadOnlyRepository<TContext>, IRepository
+    public abstract class EFRepository<TContext> : EFReadOnlyRepository<TContext>, IRepository
     where TContext : DbContext
     {
-        public EntityFrameworkRepository(TContext context)
-            : base(context)
+        public EFRepository(TContext context) : base(context)
         { }
 
-        public virtual void Create<TEntity>(TEntity entity, string createdBy = null)
-            where TEntity : class, IEntity
+        public virtual void Create<TEntity>(TEntity entity, string createdBy = null) where TEntity : class, IEntity
         {
             entity.CreatedDate = DateTime.UtcNow;
             entity.CreatedBy = createdBy;
             context.Set<TEntity>().Add(entity);
         }
 
-        public virtual void Update<TEntity>(TEntity entity, string modifiedBy = null)
-            where TEntity : class, IEntity
+        public virtual void Update<TEntity>(TEntity entity, string modifiedBy = null) where TEntity : class, IEntity
         {
             entity.ModifiedDate = DateTime.UtcNow;
             entity.ModifiedBy = modifiedBy;
@@ -31,21 +27,21 @@ namespace Generic.Business.Repository.Repositories
             context.Entry(entity).State = EntityState.Modified;
         }
 
-        public virtual void Delete<TEntity>(object id)
-            where TEntity : class, IEntity
+        public virtual void Delete<TEntity>(object id) where TEntity : class, IEntity
         {
             TEntity entity = context.Set<TEntity>().Find(id);
             Delete(entity);
         }
 
-        public virtual void Delete<TEntity>(TEntity entity)
-            where TEntity : class, IEntity
+        public virtual void Delete<TEntity>(TEntity entity) where TEntity : class, IEntity
         {
-            var dbSet = context.Set<TEntity>();
+            DbSet<TEntity> dbSet = context.Set<TEntity>();
+
             if (context.Entry(entity).State == EntityState.Detached)
             {
                 dbSet.Attach(entity);
             }
+
             dbSet.Remove(entity);
         }
 
@@ -82,6 +78,7 @@ namespace Generic.Business.Repository.Repositories
             var exceptionMessage = string.Concat(e.Message, " DbUpdateException: ", errorMessage);
             throw new DbUpdateException(exceptionMessage, e);
         }
+
     }
 
 }
