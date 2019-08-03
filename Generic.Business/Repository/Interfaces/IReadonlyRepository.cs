@@ -13,14 +13,16 @@ namespace Generic.Business.Repository.Interfaces
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = null,
             int? skip = null,
-            int? take = null)
+            int? take = null,
+            bool asNoTracking = false)
             where TEntity : class, IEntity;
 
         Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = null,
             int? skip = null,
-            int? take = null)
+            int? take = null,
+            bool asNoTracking = false)
             where TEntity : class, IEntity;
 
         IEnumerable<TEntity> Get<TEntity>(

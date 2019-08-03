@@ -13,6 +13,7 @@ namespace Generic.Business.Repository.Repositories
     where TContext : DbContext
     {
         protected readonly TContext context;
+        private bool asNoTracking = false;
 
         public EntityFrameworkReadOnlyRepository(TContext context)
         {
@@ -63,9 +64,14 @@ namespace Generic.Business.Repository.Repositories
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = null,
             int? skip = null,
-            int? take = null)
+            int? take = null,
+            bool asNoTracking = false)
             where TEntity : class, IEntity
         {
+            if (asNoTracking)
+            {
+                return GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).AsNoTracking().ToList();
+            }
             return GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).ToList();
         }
 
@@ -73,9 +79,14 @@ namespace Generic.Business.Repository.Repositories
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = null,
             int? skip = null,
-            int? take = null)
+            int? take = null,
+            bool asNoTracking = false)
             where TEntity : class, IEntity
         {
+            if (asNoTracking)
+            {
+                return await GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).AsNoTracking().ToListAsync();
+            }
             return await GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).ToListAsync();
         }
 
