@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Business.Repository.Repositories
 {
-    public class EntityFrameworkReadOnlyRepository<TContext> : IReadOnlyRepository
+    public abstract class EFReadOnlyRepository<TContext> : IReadOnlyRepository
     where TContext : DbContext
     {
-        protected readonly TContext context;
+        protected TContext context;
         private bool asNoTracking = false;
 
-        public EntityFrameworkReadOnlyRepository(TContext context)
+        public EFReadOnlyRepository(TContext context)
         {
             this.context = context;
         }
