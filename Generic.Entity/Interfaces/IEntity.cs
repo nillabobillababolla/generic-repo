@@ -16,4 +16,12 @@ namespace Generic.Entity.Interfaces
     {
         new T Id { get; set; }
     }
+
+    public interface IEntityWithCopyMethods<T> : IEntity<T>
+    {
+        T ShallowCopy();
+
+        T DeepCopy();
+    }
+
 }

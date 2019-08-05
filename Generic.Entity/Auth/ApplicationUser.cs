@@ -33,6 +33,5 @@ namespace Generic.Entity.Auth
 
         [Timestamp]
         public byte[] Version { get; set; }
-
     }
 }
