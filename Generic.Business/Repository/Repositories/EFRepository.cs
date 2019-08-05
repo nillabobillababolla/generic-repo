@@ -6,10 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Business.Repository.Repositories
 {
-    public abstract class EFRepository<TContext> : EFReadOnlyRepository<TContext>, IRepository
-    where TContext : DbContext
+    public abstract class EFRepository<TContext> : EFReadOnlyRepository<TContext>, IRepository where TContext : DbContext
     {
-        public EFRepository(TContext context) : base(context)
+        protected EFRepository(TContext context) : base(context)
         { }
 
         public virtual void Create<TEntity>(TEntity entity, string createdBy = null) where TEntity : class, IEntity
