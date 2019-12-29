@@ -182,5 +182,4 @@ namespace Generic.Business.Repository.Repositories
             return GetQueryable<TEntity>(filter).AnyAsync();
         }
     }
-
 }

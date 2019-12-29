@@ -4,5 +4,4 @@ namespace Generic.Entity.Interfaces
     {
         string Name { get; set; }
     }
-
 }

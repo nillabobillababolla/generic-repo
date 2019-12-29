@@ -67,5 +67,4 @@ namespace Generic.Business.Repository.Interfaces
 
         Task<bool> GetExistsAsync<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : class, IEntity;
     }
-
 }

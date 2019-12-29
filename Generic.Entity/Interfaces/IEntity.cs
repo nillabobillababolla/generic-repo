@@ -23,5 +23,4 @@ namespace Generic.Entity.Interfaces
 
         T DeepCopy();
     }
-
 }

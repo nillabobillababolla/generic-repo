@@ -77,7 +77,5 @@ namespace Generic.Business.Repository.Repositories
             var exceptionMessage = string.Concat(e.Message, " DbUpdateException: ", errorMessage);
             throw new DbUpdateException(exceptionMessage, e);
         }
-
     }
-
 }
