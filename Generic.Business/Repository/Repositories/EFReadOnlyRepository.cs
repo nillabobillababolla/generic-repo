@@ -13,7 +13,6 @@ namespace Generic.Business.Repository.Repositories
     where TContext : DbContext
     {
         protected TContext context;
-        private bool asNoTracking = false;
 
         public EFReadOnlyRepository(TContext context)
         {
