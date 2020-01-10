@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Generic.Entity.Abstracts
 {
-    public abstract class Entity<T> : IEntityWithCopyMethods<T>
+    public abstract class Entity<T> : IFlaggedEntity<T>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -20,13 +20,13 @@ namespace Generic.Entity.Abstracts
         }
         public string Name { get; set; }
 
-        private DateTime? createdDate;
+        private DateTime? _createdDate;
 
         [DataType(DataType.DateTime)]
         public DateTime CreatedDate
         {
-            get { return createdDate ?? DateTime.UtcNow; }
-            set { createdDate = value; }
+            get { return _createdDate ?? DateTime.UtcNow; }
+            set { _createdDate = value; }
         }
 
         [DataType(DataType.DateTime)]
@@ -35,6 +35,19 @@ namespace Generic.Entity.Abstracts
         public string CreatedBy { get; set; }
 
         public string ModifiedBy { get; set; }
+
+        private DateTime? _deletedDate;
+
+        [DataType(DataType.DateTime)]
+        public DateTime? DeletedDate
+        {
+            get
+            {
+                return _deletedDate ?? DateTime.UtcNow;
+            }
+            set { _deletedDate = value; }
+        }
+        public string DeletedBy { get; set; }
 
         [Timestamp]
         public byte[] Version { get; set; }
@@ -51,6 +64,7 @@ namespace Generic.Entity.Abstracts
                 var formatter = new BinaryFormatter();
                 formatter.Serialize(ms, this);
                 ms.Position = 0;
+
                 return (T)formatter.Deserialize(ms);
             }
         }

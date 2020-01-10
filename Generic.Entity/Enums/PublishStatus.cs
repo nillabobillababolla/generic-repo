@@ -4,14 +4,14 @@ using Generic.Entity.Interfaces;
 
 namespace Generic.Entity.Enums
 {
-    public enum PublishStatus
+    public enum PublishStatus : byte
     {
         [Display(Name = "Draft")]
-        Draft,
+        Draft = 0,
         [Display(Name = "Pending Review")]
-        PendingReview,
+        PendingReview = 1,
         [Display(Name = "Published")]
-        Published
+        Published = 2
     }
 
     public interface IModifiablePublicationEntity : IModifiableEntity
@@ -20,10 +20,13 @@ namespace Generic.Entity.Enums
         DateTime? PublishDate { get; set; }
         DateTime? ExpireDate { get; set; }
     }
+
     public interface IPublicationEntity : IModifiablePublicationEntity, IEntity
     { }
+
     public interface IPublicationEntity<T> : IPublicationEntity, IEntity<T>
     { }
+
     public interface IModifiablePageEntity : IModifiablePublicationEntity
     {
         string Title { get; set; }
@@ -32,8 +35,10 @@ namespace Generic.Entity.Enums
         string Abstract { get; set; }
         string Content { get; set; }
     }
+
     public interface IPageEntity : IModifiablePageEntity, IPublicationEntity
     { }
+
     public interface IPageEntity<T> : IPageEntity, IPublicationEntity<T>
     { }
 

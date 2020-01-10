@@ -11,28 +11,34 @@ namespace Generic.Business.Repository.Repositories
         protected EFRepository(TContext context) : base(context)
         { }
 
-        public virtual void Create<TEntity>(TEntity entity, string createdBy = null) where TEntity : class, IEntity
+        public virtual void Create<TEntity>(TEntity entity, string createdBy = null)
+            where TEntity : class, IEntity
         {
             entity.CreatedDate = DateTime.UtcNow;
             entity.CreatedBy = createdBy;
             context.Set<TEntity>().Add(entity);
         }
 
-        public virtual void Update<TEntity>(TEntity entity, string modifiedBy = null) where TEntity : class, IEntity
+        public virtual void Update<TEntity>(TEntity entity, string modifiedBy = null)
+            where TEntity : class, IEntity
         {
             entity.ModifiedDate = DateTime.UtcNow;
             entity.ModifiedBy = modifiedBy;
+
             context.Set<TEntity>().Attach(entity);
             context.Entry(entity).State = EntityState.Modified;
         }
 
-        public virtual void Delete<TEntity>(object id) where TEntity : class, IEntity
+        public virtual void Delete<TEntity>(object id)
+            where TEntity : class, IEntity
         {
             TEntity entity = context.Set<TEntity>().Find(id);
+
             Delete(entity);
         }
 
-        public virtual void Delete<TEntity>(TEntity entity) where TEntity : class, IEntity
+        public virtual void Delete<TEntity>(TEntity entity)
+            where TEntity : class, IEntity
         {
             DbSet<TEntity> dbSet = context.Set<TEntity>();
 
@@ -54,6 +60,10 @@ namespace Generic.Business.Repository.Repositories
             {
                 ThrowEnhancedValidationException(e);
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public virtual Task SaveAsync()
@@ -62,20 +72,24 @@ namespace Generic.Business.Repository.Repositories
             {
                 return context.SaveChangesAsync();
             }
-            catch (DbUpdateException e)
+            catch (DbUpdateException ex)
             {
-                ThrowEnhancedValidationException(e);
+                ThrowEnhancedValidationException(ex);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
 
             return Task.FromResult(0);
         }
 
-        protected virtual void ThrowEnhancedValidationException(DbUpdateException e)
+        protected virtual void ThrowEnhancedValidationException(DbUpdateException ex)
         {
-            var errorMessage = e.Message;
+            var errorMessage = ex.Message;
+            var exceptionMessage = string.Concat(ex.Message, " DbUpdateException: ", errorMessage);
 
-            var exceptionMessage = string.Concat(e.Message, " DbUpdateException: ", errorMessage);
-            throw new DbUpdateException(exceptionMessage, e);
+            throw new DbUpdateException(exceptionMessage, ex);
         }
     }
 }
