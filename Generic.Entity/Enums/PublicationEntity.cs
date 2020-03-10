@@ -6,26 +6,26 @@ namespace Generic.Entity.Enums
 {
     public abstract class PublicationEntity<T> : Entity<T>, IPublicationEntity<T>
     {
-        private PublishStatus? status;
+        private PublishStatus? _status;
         public PublishStatus Status
         {
-            get { return status ?? PublishStatus.Draft; }
-            set { status = value; }
+            get => _status ?? PublishStatus.Draft;
+            set => _status = value;
         }
-        private DateTime? publishDate;
+        private DateTime? _publishDate;
 
         [DataType(DataType.DateTime)]
         public DateTime? PublishDate
         {
             get
             {
-                if (!publishDate.HasValue && Status == PublishStatus.Published)
+                if (!_publishDate.HasValue && Status == PublishStatus.Published)
                 {
-                    publishDate = DateTime.UtcNow;
+                    _publishDate = DateTime.UtcNow;
                 }
-                return publishDate;
+                return _publishDate;
             }
-            set { publishDate = value; }
+            set => _publishDate = value;
         }
 
         [DataType(DataType.DateTime)]

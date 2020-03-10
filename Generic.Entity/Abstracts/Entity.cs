@@ -15,8 +15,8 @@ namespace Generic.Entity.Abstracts
 
         object IEntity.Id
         {
-            get { return this.Id; }
-            set { this.Id = (T)Convert.ChangeType(value, typeof(T)); }
+            get => this.Id;
+            set => this.Id = (T)Convert.ChangeType(value, typeof(T));
         }
         public string Name { get; set; }
 
@@ -25,8 +25,8 @@ namespace Generic.Entity.Abstracts
         [DataType(DataType.DateTime)]
         public DateTime CreatedDate
         {
-            get { return _createdDate ?? DateTime.UtcNow; }
-            set { _createdDate = value; }
+            get => _createdDate ?? DateTime.UtcNow;
+            set => _createdDate = value;
         }
 
         [DataType(DataType.DateTime)]
@@ -38,14 +38,13 @@ namespace Generic.Entity.Abstracts
 
         private DateTime? _deletedDate;
 
+        public bool? IsDeleted { get; set; }
+
         [DataType(DataType.DateTime)]
         public DateTime? DeletedDate
         {
-            get
-            {
-                return _deletedDate ?? DateTime.UtcNow;
-            }
-            set { _deletedDate = value; }
+            get => _deletedDate ?? DateTime.UtcNow;
+            set => _deletedDate = value;
         }
         public string DeletedBy { get; set; }
 
@@ -54,7 +53,7 @@ namespace Generic.Entity.Abstracts
 
         public T ShallowCopy()
         {
-            return (T)this.MemberwiseClone();
+            return (T)MemberwiseClone();
         }
 
         public T DeepCopy()

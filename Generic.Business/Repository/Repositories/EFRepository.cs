@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Business.Repository.Repositories
 {
-    public abstract class EFRepository<TContext> : EFReadOnlyRepository<TContext>, IRepository where TContext : DbContext
+    public abstract class EfRepository<TContext> : EfReadOnlyRepository<TContext>, IRepository where TContext : DbContext
     {
-        protected EFRepository(TContext context) : base(context)
+        protected EfRepository(TContext context) : base(context)
         { }
 
         public virtual void Create<TEntity>(TEntity entity, string createdBy = null)
@@ -16,7 +16,7 @@ namespace Generic.Business.Repository.Repositories
         {
             entity.CreatedDate = DateTime.UtcNow;
             entity.CreatedBy = createdBy;
-            context.Set<TEntity>().Add(entity);
+            Context.Set<TEntity>().Add(entity);
         }
 
         public virtual void Update<TEntity>(TEntity entity, string modifiedBy = null)
@@ -25,14 +25,14 @@ namespace Generic.Business.Repository.Repositories
             entity.ModifiedDate = DateTime.UtcNow;
             entity.ModifiedBy = modifiedBy;
 
-            context.Set<TEntity>().Attach(entity);
-            context.Entry(entity).State = EntityState.Modified;
+            Context.Set<TEntity>().Attach(entity);
+            Context.Entry(entity).State = EntityState.Modified;
         }
 
         public virtual void Delete<TEntity>(object id)
             where TEntity : class, IEntity
         {
-            TEntity entity = context.Set<TEntity>().Find(id);
+            var entity = Context.Set<TEntity>().Find(id);
 
             Delete(entity);
         }
@@ -40,9 +40,9 @@ namespace Generic.Business.Repository.Repositories
         public virtual void Delete<TEntity>(TEntity entity)
             where TEntity : class, IEntity
         {
-            DbSet<TEntity> dbSet = context.Set<TEntity>();
+            var dbSet = Context.Set<TEntity>();
 
-            if (context.Entry(entity).State == EntityState.Detached)
+            if (Context.Entry(entity).State == EntityState.Detached)
             {
                 dbSet.Attach(entity);
             }
@@ -54,7 +54,7 @@ namespace Generic.Business.Repository.Repositories
         {
             try
             {
-                context.SaveChanges();
+                Context.SaveChanges();
             }
             catch (DbUpdateException e)
             {
@@ -70,7 +70,7 @@ namespace Generic.Business.Repository.Repositories
         {
             try
             {
-                return context.SaveChangesAsync();
+                return Context.SaveChangesAsync();
             }
             catch (DbUpdateException ex)
             {

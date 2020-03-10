@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Business.Repository.Repositories
 {
-    public abstract class EFReadOnlyRepository<TContext> : IReadOnlyRepository
+    public abstract class EfReadOnlyRepository<TContext> : IReadOnlyRepository
     where TContext : DbContext
     {
-        protected TContext context;
+        protected readonly TContext Context;
 
-        public EFReadOnlyRepository(TContext context)
+        protected EfReadOnlyRepository(TContext context)
         {
-            this.context = context;
+            this.Context = context;
         }
 
         protected virtual IQueryable<TEntity> GetQueryable<TEntity>(
@@ -28,24 +28,21 @@ namespace Generic.Business.Repository.Repositories
             where TEntity : class, IEntity
         {
             includeProperties = includeProperties ?? string.Empty;
-            IQueryable<TEntity> query = context.Set<TEntity>();
+            IQueryable<TEntity> query = Context.Set<TEntity>();
 
             if (filter != null)
             {
                 query = query.Where(filter);
             }
 
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
+            query = includeProperties.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries)
+                .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
 
             if (orderBy != null)
             {
                 query = orderBy(query);
             }
-
+            
             if (skip.HasValue)
             {
                 query = query.Skip(skip.Value);
@@ -67,11 +64,8 @@ namespace Generic.Business.Repository.Repositories
             bool asNoTracking = false)
             where TEntity : class, IEntity
         {
-            if (asNoTracking)
-            {
-                return GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).AsNoTracking().ToList();
-            }
-            return GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).ToList();
+            return asNoTracking ? GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).AsNoTracking().ToList() 
+                : GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).ToList();
         }
 
         public virtual async Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(
@@ -148,13 +142,13 @@ namespace Generic.Business.Repository.Repositories
         public virtual TEntity GetById<TEntity>(object id)
             where TEntity : class, IEntity
         {
-            return context.Set<TEntity>().Find(id);
+            return Context.Set<TEntity>().Find(id);
         }
 
         public virtual Task<TEntity> GetByIdAsync<TEntity>(object id)
             where TEntity : class, IEntity
         {
-            return context.Set<TEntity>().FindAsync(id);
+            return Context.Set<TEntity>().FindAsync(id);
         }
 
         public virtual int GetCount<TEntity>(Expression<Func<TEntity, bool>> filter = null)
