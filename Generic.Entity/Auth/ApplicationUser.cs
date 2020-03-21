@@ -9,19 +9,19 @@ namespace Generic.Entity.Auth
     {
         object IEntity.Id
         {
-            get { return this.Id; }
-            set { this.Id = (string)Convert.ChangeType(value, typeof(string)); }
+            get => this.Id;
+            set => this.Id = (string)Convert.ChangeType(value, typeof(string));
         }
 
         public string Name { get; set; }
 
-        private DateTime? createdDate;
+        private DateTime? _createdDate;
 
         [DataType(DataType.DateTime)]
         public DateTime CreatedDate
         {
-            get { return createdDate ?? DateTime.UtcNow; }
-            set { createdDate = value; }
+            get => _createdDate ?? DateTime.UtcNow;
+            set => _createdDate = value;
         }
 
         [DataType(DataType.DateTime)]
